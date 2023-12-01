@@ -1,59 +1,65 @@
-from flask import Flask
+# This code sample uses the 'requests' library:
+# http://docs.python-requests.org
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-# Creating a flask instance
+from flask import Flask
+
 app = Flask(__name__)
 
-@app.route("/createJIRA", methods=['POST'])
-def createJIRA():
-    url = "https://bondarishi.atlassian.net/rest/api/3/issue"
+# Define a route that handles GET requests
+@app.route('/createJira', methods=['POST'])
+def createJira():
 
-    API_TOKEN = ""
+    url = "https://veeramallaabhishek.atlassian.net/rest/api/3/issue"
+
+    API_TOKEN=""
 
     auth = HTTPBasicAuth("", API_TOKEN)
 
     headers = {
-    "Accept": "application/json",
-    "Content-Type": "application/json"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
     }
 
     payload = json.dumps( {
-    "fields": {
+        "fields": {
         "description": {
-        "content": [
-            {
             "content": [
                 {
-                "text": "My first jira ticket",
-                "type": "text"
-                }
-            ],
-            "type": "paragraph"
-            }
-        ],
-        "type": "doc",
-        "version": 1
+                    "content": [
+                        {
+                            "text": "Order entry fails when selecting supplier.",
+                            "type": "text"
+                        }
+                    ],
+                    "type": "paragraph"
+                    }
+                ],
+            "type": "doc",
+             "version": 1
         },
         "project": {
-        "key": "MP"
+           "key": "MP"
         },
         "issuetype": {
-        "id": "10004"
+            "id": "10004"
         },
-        "summary": "First JIRA Ticket",
+        "summary": "Main order flow broken",
     },
     "update": {}
     } )
 
+
     response = requests.request(
-    "POST",
-    url,
-    data=payload,
-    headers=headers,
-    auth=auth
+        "POST",
+        url,
+        data=payload,
+        headers=headers,
+        auth=auth
     )
 
-    return (json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": ")))
+    return json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
 
-app.run('0.0.0.0')
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
